@@ -10,7 +10,7 @@ https://docs.google.com/document/d/1aN0iQ_3q1vCunBuSWAK3pRtmS-nth8wNrIiyRqkCRP4/
 
 La suite ejecuta autenticaciones concurrentes contra `https://fakestoreapi.com/auth/login` y valida tres criterios principales:
 
-- throughput mayor a 20 TPS
+- throughput mayor a 20 TPS (donde **TPS = total_reqs / duración**)
 - `p(95)` de `http_req_duration` menor a 1.5 segundos
 - tasa de error menor a 3%
 
@@ -82,7 +82,14 @@ Servicios esperados:
 
 ## Ejecutar la Prueba
 
-La prueba principal actual es:
+La suite principal de carga es:
+
+```bash
+docker-compose run k6 run /k6-tests/tests/login-load.js
+```
+
+Si quieres correr solo la prueba de humo (smoke test):
+
 
 ```bash
 docker-compose run k6 run /k6-tests/tests/login-smoke.js

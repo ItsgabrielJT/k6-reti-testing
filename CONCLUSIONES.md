@@ -2,6 +2,16 @@
 
 ## Resultado General
 
+## Línea Base de Ejecuciones
+
+A continuación se presenta la tabla comparativa de resultados base para futuras referencias de rendimiento:
+
+| Ejecución | Perfil     | VUs  | Iteraciones totales | Duración (s) | TPS promedio | Errores % | p(95) latencia | Cumple SLA |
+|-----------|------------|------|---------------------|--------------|--------------|-----------|----------------|------------|
+| \#1       | Load       | 6-37 | 1032                | 51.6         | 20.0         | 0.00%     | 1.84s          | ❌         |
+| \#2       | Smoke      | 1    | 5                   | 0.8          | ~6.2         | 0.00%     | 1.30s          | ✅         |
+
+
 La ejecución más reciente de la suite de login con k6 fue funcionalmente exitosa, pero no cumplió de forma completa los umbrales definidos para latencia bajo una carga superior a 20 TPS.
 
 - Feature ejecutada: `tests/login-smoke.js`
@@ -21,7 +31,9 @@ Esto permitió:
 
 - Garantizar una tasa objetivo superior al umbral mínimo requerido
 - Medir el comportamiento del endpoint bajo carga sostenida
-- Evitar resultados variables dependientes solo del ramp-up de usuarios virtuales
+- Evitar resultados variables dependientes solo del ramp-up de usuarios virtuales.
+
+La fórmula usada para evaluar TPS es explícita: **TPS = total_reqs / duración**.
 - Alinear el diseño de la prueba con un criterio explícito de TPS
 
 En la ejecución más reciente, la prueba alcanzó:

@@ -2,7 +2,7 @@ import { group } from 'k6';
 import { SharedArray } from 'k6/data';
 import { login } from '../modules/authSteps.js';
 import { validateLoginResponse } from '../modules/validators.js';
-import { commonOptions } from '../config.js';
+import { smokeOptions } from '../config.js';
 
 const users = new SharedArray('users', function () {
   return open('../data/users.csv')
@@ -16,12 +16,12 @@ const users = new SharedArray('users', function () {
 });
 
 export const options = {
-  ...commonOptions,
-  tags: { feature: 'auth', env: 'production' },
+  ...smokeOptions,
+  tags: { feature: 'auth', env: 'smoke' },
 };
 
 export default function () {
-  const userData = users[(__VU - 1) % users.length];
+  const userData = users[(__VU - 1) % users.length] || users[0];
 
   group('@login @smoke', function () {
     const response = login(userData.user, userData.passwd);

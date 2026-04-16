@@ -2,6 +2,21 @@
 
 ## Resultado General
 
+## Cumplimiento de Criterios
+
+Todo esta implementado bajo principios de **Clean Code** y **SOLID** (enfocado principalmente en Responsabilidad Única - SRP):
+
+1. **Separación de Perfiles (*Smoke* vs *Load*)**: 
+   - Se crearon dos objetos separados en `config.js` (`smokeOptions` y `loadOptions`).
+   - Se dividieron las pruebas en scripts independientes: `tests/login-smoke.js` para una validación rápida y `tests/login-load.js` para validar p(95), TPS sostenidos y errores.
+   
+3. **Manejo Explícito de Errores de Red**: 
+   - Se expandió la función `login` dentro de `authSteps.js` para capturar y notificar en los logs posibles caídas de conexión (`connection refused`) y expiraciones relativas (`timeout` o `error_code===1050`).
+
+4. **Línea de Base y Documentación**: 
+   - Integración formal de la fórmula explícita de cálculos de carga (**TPS = total_reqs / duración**) en la documentación base y en las conclusiones.
+   - Construcción de la tabla de resultados de múltiples ejecuciones para facilitar mediciones históricas.
+
 ## Línea Base de Ejecuciones
 
 A continuación se presenta la tabla comparativa de resultados base para futuras referencias de rendimiento:
@@ -112,13 +127,3 @@ El diseño actual deja una base sólida para continuar con pruebas de performanc
 3. Conservar validaciones alineadas al comportamiento real del endpoint público para evitar falsos fallos.
 4. Reportar explícitamente que el endpoint público no asegura p95 menor a 1.5 segundos cuando se exige un throughput mayor a 20 TPS.
 5. Si se requiere cumplimiento estable del SLA, ejecutar la prueba sobre un entorno controlado o una API propia en lugar de un servicio público compartido.
-
-# Anexos
-
-### Captura de la ejecución más reciente en dashboard de grafana mostrando los resultados clave y la configuración del escenario:
-
-[![Captura-de-pantalla-2026-03-30-a-la(s)-11-49-22-a-m.png](https://i.postimg.cc/zf4Nc5JF/Captura-de-pantalla-2026-03-30-a-la(s)-11-49-22-a-m.png)](https://postimg.cc/cK7Pvptv)
-
-### Captura de ejecucion en CLI
-
-[![Captura-de-pantalla-2026-03-30-a-la(s)-11-56-43-a-m.png](https://i.postimg.cc/W3Dm6B8t/Captura-de-pantalla-2026-03-30-a-la(s)-11-56-43-a-m.png)](https://postimg.cc/mzsFT60G)

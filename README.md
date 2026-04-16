@@ -39,7 +39,24 @@ k6-tests/
 │   └── login-smoke.js
 ├── CONCLUSIONES.md
 └── README.md
+
 ```
+
+## Requisitos
+
+### 1. Prerequisitos:
+** A continuación se describen las versiones de las dependencias y tecnologías necesarias para configurar y ejecutar el proyecto en su máquina local:
+- **Máquina local** con sistema operativo macOS (o Windows 10/Linux).
+- **IDE**: Visual Studio Code (o cualquier editor moderno como IntelliJ 2023.1).
+- **Docker**: versión 24.0 o superior (debe estar iniciada en la máquina).
+- **Docker Compose**: versión 2.0 o superior (viene incluido con Docker Desktop).
+- **k6 (opcional)**: v1.7.0 (sólo si desea correr las ejecuciones por fuera del contenedor mediante consola local).
+
+### 2. Comandos de instalación:
+** Comandos básicos necesarios para descargar y levantar todas las dependencias e infraestructura en su máquina local:
+- `docker-compose pull` (descarga y actualiza las imágenes definidas en el `docker-compose.yml`, como InfluxDB y Grafana).
+- `docker-compose build` (construye la imagen del contenedor si hay volúmenes customizados de k6, opcional).
+- `brew install k6` (si estás en macOS y deseas instalar la dependencia localmente de k6 usando Homebrew).
 
 ## Cómo Funciona
 
@@ -52,12 +69,6 @@ El flujo actual del proyecto es simple:
 5. La configuración global de carga y thresholds vive en `config.js`.
 6. Las métricas se envían a InfluxDB y se visualizan en Grafana.
 
-## Requisitos
-
-- Docker
-- Docker Compose
-
-No necesitas instalar k6, InfluxDB ni Grafana localmente porque todo corre por contenedores.
 
 ## Levantar el Proyecto
 
@@ -140,24 +151,6 @@ http://localhost:3000/d/k6/k6-load-testing-results
 
 Grafana queda provisionado automáticamente con InfluxDB como datasource.
 
-## Interpretar el Resultado
-
-La ejecución termina correctamente solo si los thresholds se cumplen.
-
-Ejemplo de lectura:
-
-- si `http_reqs` es mayor a 20, se cumple el TPS mínimo
-- si `http_req_failed` es menor a 3%, se cumple la tasa de error
-- si `p(95)` es menor a 1.5 segundos, se cumple el SLA de latencia
-
-Si k6 muestra:
-
-```text
-ERRO thresholds on metrics 'http_req_duration' have been crossed
-```
-
-significa que la prueba fue funcionalmente correcta, pero el sistema bajo prueba no sostuvo la latencia requerida.
-
 ## Limitaciones Actuales
 
 La suite apunta a una API pública compartida. Eso implica variabilidad real de rendimiento.
@@ -186,9 +179,10 @@ docker-compose logs influxdb
 
 ## Archivos Clave
 
-- `config.js`: escenario de carga, thresholds y configuración HTTP
-- `tests/login-smoke.js`: script principal de la prueba
-- `modules/authSteps.js`: llamada HTTP de login
-- `modules/validators.js`: checks funcionales de la respuesta
-- `data/users.csv`: usuarios usados durante la prueba
-- `CONCLUSIONES.md`: hallazgos y conclusiones del ejercicio
+- `config.js`: configuración de escenarios de carga (`smokeOptions`, `loadOptions`), thresholds y configuración HTTP.
+- `tests/login-smoke.js`: script para la prueba de humo rápida (Validación básica).
+- `tests/login-load.js`: script principal para la prueba de carga y TPS sostenidos.
+- `modules/authSteps.js`: llamada HTTP de login integrando además un manejo explícito de errores de red (timeout / con. refused).
+- `modules/validators.js`: checkeo y aserciones limpias (sin código muerto).
+- `data/users.csv`: usuarios usados durante la prueba.
+- `CONCLUSIONES.md`: hallazgos y comprobaciones con la línea de base.

@@ -4,7 +4,7 @@ Proyecto de pruebas de carga con k6 para validar el endpoint de login de Fake St
 
 ## Ejercicio 2
 
-https://docs.google.com/document/d/1aN0iQ_3q1vCunBuSWAK3pRtmS-nth8wNrIiyRqkCRP4/edit?usp=sharing
+[Ver documento InformeResultados.doc](https://docs.google.com/document/d/11bgOXNMNX_UzazduC5fuLM21YnCRTrJPV3cA6dJodFQ/edit?usp=sharing)
 
 ## Objetivo
 
@@ -149,7 +149,7 @@ Una vez levantado Docker, abre:
 http://localhost:3000/d/k6/k6-load-testing-results
 ```
 
-Grafana queda provisionado automáticamente con InfluxDB como datasource.
+Grafana queda provisionado automáticamente con InfluxDB como datasource.x
 
 ## Limitaciones Actuales
 

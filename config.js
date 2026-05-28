@@ -9,9 +9,11 @@ export const smokeOptions = {
       maxDuration: '10s',
     },
   },
+  summaryTrendStats: ['min', 'avg', 'med', 'max', 'p(90)', 'p(95)', 'p(99)'],
   thresholds: {
-    http_req_duration: ['p(95)<1500'],
-    http_req_failed: ['rate<0.01'], 
+    http_req_duration: ['p(95)<1500', 'p(99)<3000'],
+    http_req_failed: ['rate<0.01'],
+    iteration_duration: ['p(95)<1500', 'p(99)<3000'],
   },
 };
 
@@ -26,10 +28,12 @@ export const loadOptions = {
       maxVUs: 60,
     },
   },
+  summaryTrendStats: ['min', 'avg', 'med', 'max', 'p(90)', 'p(95)', 'p(99)'],
   thresholds: {
-    http_req_duration: ['p(95)<1500'],
+    http_req_duration: ['p(95)<1500', 'p(99)<3000'],
     http_req_failed: ['rate<0.03'],
     http_reqs: ['rate>20'],
+    iteration_duration: ['p(95)<1500', 'p(99)<3000'],
   },
 };
 

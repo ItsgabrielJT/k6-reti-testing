@@ -2,6 +2,18 @@
 
 Proyecto de pruebas de carga con k6 para validar el endpoint de login de Fake Store API usando Docker, InfluxDB y Grafana.
 
+## Limitaciones Actuales
+
+La suite apunta a una API pública compartida. Eso implica variabilidad real de rendimiento.
+
+En las últimas ejecuciones se observó que:
+
+- el throughput sí puede superar 20 TPS
+- la tasa de error puede mantenerse en 0%
+- el p95 no siempre se mantiene por debajo de 1.5 segundos
+
+Por eso, este repo sirve tanto para validar el script como para evidenciar si el endpoint cumple o no el SLA bajo carga.
+
 ## Ejercicio 2
 
 [Ver documento InformeResultados.doc](https://docs.google.com/document/d/11bgOXNMNX_UzazduC5fuLM21YnCRTrJPV3cA6dJodFQ/edit?usp=sharing)
@@ -20,7 +32,17 @@ Adicionalmente valida que cada respuesta de login:
 - incluya un token
 - no retorne un token vacío
 
-## Estructura del Proyecto
+## Requisitos
+
+### Prerequisitos:
+** A continuación se describen las versiones de las dependencias y tecnologías necesarias para configurar y ejecutar el proyecto en su máquina local:
+- **Máquina local** con sistema operativo macOS (o Windows 10/Linux).
+- **IDE**: Visual Studio Code (o cualquier editor moderno como IntelliJ 2023.1).
+- **Docker**: versión 24.0 o superior (debe estar iniciada en la máquina).
+- **Docker Compose**: versión 2.0 o superior (viene incluido con Docker Desktop).
+- **k6 (opcional)**: v1.7.0 (sólo si desea correr las ejecuciones por fuera del contenedor mediante consola local).
+
+## 1. Estructura del Proyecto
 
 ```text
 k6-tests/
@@ -34,23 +56,15 @@ k6-tests/
 │       └── datasources/
 ├── modules/
 │   ├── authSteps.js
+│   ├── summaryHelper.js
 │   └── validators.js
 ├── tests/
+│   ├── login-load.js
 │   └── login-smoke.js
 ├── CONCLUSIONES.md
 └── README.md
 
 ```
-
-## Requisitos
-
-### 1. Prerequisitos:
-** A continuación se describen las versiones de las dependencias y tecnologías necesarias para configurar y ejecutar el proyecto en su máquina local:
-- **Máquina local** con sistema operativo macOS (o Windows 10/Linux).
-- **IDE**: Visual Studio Code (o cualquier editor moderno como IntelliJ 2023.1).
-- **Docker**: versión 24.0 o superior (debe estar iniciada en la máquina).
-- **Docker Compose**: versión 2.0 o superior (viene incluido con Docker Desktop).
-- **k6 (opcional)**: v1.7.0 (sólo si desea correr las ejecuciones por fuera del contenedor mediante consola local).
 
 ### 2. Comandos de instalación:
 ** Comandos básicos necesarios para descargar y levantar todas las dependencias e infraestructura en su máquina local:
@@ -124,9 +138,10 @@ La carga actual está definida en `config.js` con un escenario `constant-arrival
 
 Thresholds activos:
 
-- `http_req_duration: p(95) < 1500`
+- `http_req_duration: p(95) < 1500ms, p(99) < 3000ms`
 - `http_req_failed: rate < 0.03`
 - `http_reqs: rate > 20`
+- `iteration_duration: p(95) < 1500ms, p(99) < 3000ms`
 
 ## Datos de Entrada
 
@@ -151,18 +166,6 @@ http://localhost:3000/d/k6/k6-load-testing-results
 
 Grafana queda provisionado automáticamente con InfluxDB como datasource.x
 
-## Limitaciones Actuales
-
-La suite apunta a una API pública compartida. Eso implica variabilidad real de rendimiento.
-
-En las últimas ejecuciones se observó que:
-
-- el throughput sí puede superar 20 TPS
-- la tasa de error puede mantenerse en 0%
-- el p95 no siempre se mantiene por debajo de 1.5 segundos
-
-Por eso, este repo sirve tanto para validar el script como para evidenciar si el endpoint cumple o no el SLA bajo carga.
-
 ## Comandos Útiles
 
 Ver logs de Grafana:
@@ -176,13 +179,3 @@ Ver logs de InfluxDB:
 ```bash
 docker-compose logs influxdb
 ```
-
-## Archivos Clave
-
-- `config.js`: configuración de escenarios de carga (`smokeOptions`, `loadOptions`), thresholds y configuración HTTP.
-- `tests/login-smoke.js`: script para la prueba de humo rápida (Validación básica).
-- `tests/login-load.js`: script principal para la prueba de carga y TPS sostenidos.
-- `modules/authSteps.js`: llamada HTTP de login integrando además un manejo explícito de errores de red (timeout / con. refused).
-- `modules/validators.js`: checkeo y aserciones limpias (sin código muerto).
-- `data/users.csv`: usuarios usados durante la prueba.
-- `CONCLUSIONES.md`: hallazgos y comprobaciones con la línea de base.
